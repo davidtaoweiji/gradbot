@@ -1,20 +1,13 @@
-# Community Contributions
+# Adding Your Project to Community Contributions
 
-Projects built by the community using Gradbot. If you've built something with Gradbot — a demo, a game, a tool, a learning project — link it here.
+The Community Contributions list lives in the main [README.md](README.md#community-contributions). To add your Gradbot project, open a PR that edits the README.
 
-## Projects
-
-<!-- Add your project below this line, keeping the list alphabetical by project name. -->
-
-<!-- Example:
-- [project-name](https://github.com/your-username/your-repo): A one-line description of what it does.
--->
-
-## How to Add Your Project
+## How to Open a PR
 
 1. Fork this repository.
 2. Create a new branch: `git checkout -b add-my-project`.
-3. Add a single line to the **Projects** list above in this format:
+3. Open `README.md` and find the **Community Contributions** section.
+4. Add a single line to the list in this format:
 
    ```
    - [name of the project](https://link-to-your-repo): description
@@ -22,10 +15,10 @@ Projects built by the community using Gradbot. If you've built something with Gr
 
    Keep the description to one line. Keep the list alphabetical by project name.
 
-4. Commit your change and open a pull request against `main`.
-5. In the PR description, briefly mention what your project does and confirm it uses Gradbot.
+5. Commit your change and open a pull request against `main`.
+6. In the PR description, briefly mention what your project does and confirm it uses Gradbot.
 
-That's it — once merged, your project will appear in the list.
+That's it — once merged, your project will appear in the README.
 
 ## Guidelines
 
