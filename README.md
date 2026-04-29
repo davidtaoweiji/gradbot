@@ -299,6 +299,10 @@ gradbot/
 
 See [gradbot_py/README.md](gradbot_py/README.md) for the full Python API documentation.
 
+## Community Contributions
+
+Built something with Gradbot? Add it to the list! See [COMMUNITY_CONTRIBUTIONS.md](COMMUNITY_CONTRIBUTIONS.md) for projects from the community and instructions on how to add yours.
+
 ## License
 
 Dual-licensed under [MIT](LICENSE-MIT) or [Apache-2.0](LICENSE-APACHE), at your option.
