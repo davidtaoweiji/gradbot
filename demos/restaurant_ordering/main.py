@@ -587,6 +587,9 @@ async def websocket_order(websocket: fastapi.WebSocket):
         # before being cancelled — sounds like overlapping/repeated stall fragments.
         # Bumping flush to 1.0s lets STT finish decoding before commit.
         config_kwargs.setdefault("flush_duration_s", 1.0)
+        # Force override even if cfg.session_kwargs already set it
+        # (Config.session_kwargs always sets a default; setdefault is a no-op there).
+        config_kwargs["flush_duration_s"] = 1.0
         # Merge CJK logit bias into llm_extra_config to suppress Chinese token generation
         if _CJK_LOGIT_BIAS:
             existing = json.loads(config_kwargs.get("llm_extra_config", "{}") or "{}")
