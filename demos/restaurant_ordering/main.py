@@ -20,6 +20,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 cfg = gradbot.config.from_env()
+cfg.use_pcm = True
 
 
 # Load CJK logit bias to suppress Chinese character generation (Qwen model artifact)
