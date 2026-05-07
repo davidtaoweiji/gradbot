@@ -639,6 +639,7 @@ async def _merge_streams(
     out_buf = ""
 
     def _make_text_chunk(text: str) -> bytes:
+        logger.info("[%s] YIELD %d chars: %r", request_id, len(text), text[:100])
         return _make_chunk(
             completion_id=completion_id, created=created,
             model=advertised_model, delta={"content": text},
@@ -688,7 +689,10 @@ async def _merge_streams(
         except asyncio.TimeoutError:
             return ""
 
-    # Phase 1: stream stall, watching for brain to start content.
+    # Phase 1: stream stall to completion. Brain runs in parallel but is
+    # NOT allowed to interrupt the stall — its content is held until the
+    # stall stream naturally finishes (sentinel None on stall_q). This
+    # eliminates audible mid-sentence cuts when brain races stall.
     while not stall_finished:
         chunk = await _next_stall()
         if chunk is None:
@@ -701,28 +705,6 @@ async def _merge_streams(
             sse = _flush_at_word_boundary()
             if sse:
                 yield sse
-
-        if brain.first_content_at is not None:
-            if not stall_emitted.strip():
-                logger.info("[%s] brain ready before stall spoke; cutting in", request_id)
-                break
-            # Wait for stall to finish her current sentence.
-            while not stall_finished:
-                last = stall_emitted.rstrip()[-1:] if stall_emitted.strip() else ""
-                if last in SENT_END:
-                    break
-                chunk = await _next_stall()
-                if chunk is None:
-                    stall_finished = True
-                    break
-                if chunk:
-                    stall_buf += chunk
-                    stall_emitted = stall_buf
-                    out_buf += chunk
-                    sse = _flush_at_word_boundary()
-                    if sse:
-                        yield sse
-            break
 
     # Drain stall queue silently.
     asyncio.create_task(_drain_queue(stall_q))
