@@ -586,6 +586,17 @@ async def websocket_order(websocket: fastapi.WebSocket):
         } | cfg.session_kwargs
         # The ordering flow should tolerate natural pauses without auto-nudging the user.
         config_kwargs["silence_timeout_s"] = 0.0
+        # STT decoding lag for sentence-final words (descending pitch like "menu?",
+        # "lemonade.") often exceeds the default 0.5s flush window, causing the last
+        # word to arrive AFTER EndOfTurn fires and miss the user_text payload sent
+        # to the LLM. This in turn triggers a SECOND LLM request 0.3-0.5s later
+        # with the now-complete sentence, and the first stall starts playing
+        # before being cancelled — sounds like overlapping/repeated stall fragments.
+        # Bumping flush to 1.0s lets STT finish decoding before commit.
+        config_kwargs.setdefault("flush_duration_s", 1.0)
+        # Force override even if cfg.session_kwargs already set it
+        # (Config.session_kwargs always sets a default; setdefault is a no-op there).
+        config_kwargs["flush_duration_s"] = 1.0
         # Merge CJK logit bias into llm_extra_config to suppress Chinese token generation
         if _CJK_LOGIT_BIAS:
             existing = json.loads(config_kwargs.get("llm_extra_config", "{}") or "{}")
